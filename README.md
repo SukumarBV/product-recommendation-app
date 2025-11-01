@@ -1,6 +1,5 @@
 # Product Recommendation System
 
-![A screenshot of the recommendation app showing side-by-side results for Collaborative and Content-Based filtering.](image_dd2f85.png)
 
 This is a simple web application that demonstrates and compares two fundamental recommendation algorithms: **Content-Based Filtering** and **Collaborative Filtering**.
 
