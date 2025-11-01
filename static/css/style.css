@@ -1,0 +1,249 @@
+/* --- Global Styles & Variables --- */
+:root {
+    --primary-color: #007bff;
+    --primary-hover: #0056b3;
+    --light-gray: #f8f9fa;
+    --medium-gray: #e9ecef;
+    --dark-gray: #6c757d;
+    --text-color: #343a40;
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --card-radius: 8px;
+}
+
+body {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--light-gray);
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.6;
+}
+
+header {
+    background: #fff;
+    padding: 2rem 1rem;
+    text-align: center;
+    border-bottom: 1px solid var(--medium-gray);
+    box-shadow: var(--card-shadow);
+}
+
+header h1 {
+    margin: 0;
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+header p {
+    margin: 0.25rem 0 0;
+    color: var(--dark-gray);
+    font-size: 1.1rem;
+}
+
+main.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    margin-top: 2rem;
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--medium-gray);
+}
+
+/* --- Card Styles --- */
+.card {
+    background: #fff;
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem 2rem;
+}
+
+.card h2 {
+    margin-top: 0;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+/* --- Form & Button Styles --- */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.form-group small {
+    display: block;
+    color: var(--dark-gray);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Custom File Upload */
+.file-upload-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+input[type="file"] {
+    position: absolute;
+    left: -9999px; /* Hide the actual input */
+}
+
+.file-upload-label {
+    background: var(--medium-gray);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.file-upload-label:hover {
+    background: #d4dae0;
+}
+
+.file-name {
+    margin-left: 1rem;
+    color: var(--dark-gray);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Select Dropdowns */
+select {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    appearance: none; /* Remove default arrow */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236c757d%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.65em auto;
+}
+
+/* Buttons */
+button {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+button:disabled {
+    background: var(--medium-gray);
+    cursor: not-allowed;
+}
+
+/* --- Status Message --- */
+#status-message {
+    margin-top: 1rem;
+    font-weight: 500;
+    padding: 0.75rem;
+    border-radius: 4px;
+    display: none; /* Hidden by default, shown by JS */
+}
+#status-message.loading { display: block; background: #fff3cd; color: #856404; }
+#status-message.success { display: block; background: #d4edda; color: #155724; }
+#status-message.error { display: block; background: #f8d7da; color: #721c24; }
+
+/* --- Selectors Section --- */
+.selectors-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Results Section --- */
+.results-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Single column on mobile */
+    gap: 1.5rem;
+}
+
+.reco-column {
+    padding: 1.5rem;
+}
+
+.reco-column h3 {
+    margin-top: 0;
+    color: var(--primary-color);
+}
+
+.reco-column p {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    border-bottom: 1px solid var(--medium-gray);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.reco-column ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.reco-column li {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+.reco-column li:last-child {
+    border-bottom: none;
+}
+
+.reco-column li small {
+    display: block;
+    color: var(--dark-gray);
+    font-size: 0.8rem;
+}
+
+.reco-column li.error {
+    color: #721c24;
+    font-weight: 500;
+}
+
+/* --- Utility --- */
+.hidden {
+    display: none;
+}
+
+/* --- Responsive Design --- */
+@media (min-width: 768px) {
+    .selectors-grid {
+        grid-template-columns: 1fr 1fr; /* Two columns on tablet */
+    }
+
+    .results-container {
+        grid-template-columns: 1fr 1fr; /* Two columns on tablet */
+    }
+}

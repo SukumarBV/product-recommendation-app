@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <h1>Product Recommendation System 🤖</h1>
+        <p>Compare Collaborative vs. Content-Based Filtering</p>
+    </header>
+
+    <main class="container">
+
+        <section class="card" id="upload-section">
+            <h2>1. Upload Data</h2>
+            <p>Upload your data files to train the models. You need two files:</p>
+            <form id="upload-form">
+                <div class="form-group">
+                    <label for="ratings_file">Ratings Data (.csv)</label>
+                    <small>Must contain <code>user_id</code>, <code>item_id</code>, <code>rating</code></small>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="ratings_file" name="ratings_file" accept=".csv" required>
+                        <label for="ratings_file" class="file-upload-label">Choose File</label>
+                        <span class="file-name">No file selected</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="products_file">Products Data (.csv)</label>
+                    <small>Must contain <code>item_id</code>, <code>title</code>, <code>description</code>, <code>category</code></small>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="products_file" name="products_file" accept=".csv" required>
+                        <label for="products_file" class="file-upload-label">Choose File</label>
+                        <span class="file-name">No file selected</span>
+                    </div>
+                </div>
+                <button type="submit" id="upload-btn">Upload & Train Models</button>
+            </form>
+            <div id="status-message"></div>
+        </section>
+
+        <section class="card hidden" id="selectors-section">
+            <h2>2. Get Recommendations</h2>
+            <div class="selectors-grid">
+                <div class="form-group">
+                    <label for="user-select">Select a User</label>
+                    <small>(For Collaborative Filtering)</small>
+                    <select id="user-select"></select>
+                </div>
+                <div class="form-group">
+                    <label for="item-select">Select a Product</label>
+                    <small>(For Content-Based Filtering)</small>
+                    <select id="item-select"></select>
+                </div>
+            </div>
+            <button id="get-recs-btn">Compare Recommendations</button>
+        </section>
+
+        <section class="results-container hidden" id="results-section">
+            <div class="card reco-column" id="cf-results">
+                <h3>Collaborative Filtering</h3>
+                <p>Based on <b>users</b> similar to your selected user.</p>
+                <ul id="cf-list"></ul>
+            </div>
+            <div class="card reco-column" id="cb-results">
+                <h3>Content-Based Filtering</h3>
+                <p>Based on <b>products</b> similar to your selected product.</p>
+                <ul id="cb-list"></ul>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        A simple Flask + scikit-learn app.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Get All DOM Elements ---
+            const uploadForm = document.getElementById('upload-form');
+            const uploadBtn = document.getElementById('upload-btn');
+            const statusMessage = document.getElementById('status-message');
+            
+            const selectorsSection = document.getElementById('selectors-section');
+            const userSelect = document.getElementById('user-select');
+            const itemSelect = document.getElementById('item-select');
+            
+            const getRecsBtn = document.getElementById('get-recs-btn');
+            const resultsSection = document.getElementById('results-section');
+            const cfList = document.getElementById('cf-list');
+            const cbList = document.getElementById('cb-list');
+
+            // --- UI Helper: Show selected file names ---
+            document.querySelectorAll('input[type="file"]').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+                    e.target.closest('.file-upload-wrapper').querySelector('.file-name').textContent = fileName;
+                });
+            });
+
+            // --- Helper: Set Status Message ---
+            function setStatus(message, type = 'info') {
+                statusMessage.textContent = message;
+                statusMessage.className = type; // 'info', 'success', 'error', 'loading'
+            }
+
+            // --- 1. Handle File Upload and Training ---
+            uploadForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                setStatus('Uploading and training models... This may take a moment.', 'loading');
+                uploadBtn.disabled = true;
+                
+                const formData = new FormData(uploadForm);
+                
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || 'An unknown error occurred.');
+                    }
+
+                    setStatus(data.message, 'success');
+                    
+                    // Populate dropdowns
+                    populateSelect(userSelect, data.users, 'Select a user');
+                    populateSelect(itemSelect, data.items, 'Select an item', 'title', 'item_id');
+                    
+                    // Show next step
+                    selectorsSection.classList.remove('hidden');
+                    resultsSection.classList.add('hidden'); // Hide old results
+
+                } catch (error) {
+                    setStatus(`Error: ${error.message}`, 'error');
+                } finally {
+                    uploadBtn.disabled = false;
+                }
+            });
+
+            // --- 2. Handle Get Recommendations ---
+            // --- 2. Handle Get Recommendations ---
+            getRecsBtn.addEventListener('click', async () => {
+                const userId = userSelect.value; // Defined as userId
+                const itemId = itemSelect.value; // Defined as itemId
+
+                if (!userId || !itemId) {
+                    alert('Please select both a user and an item.');
+                    return;
+                }
+
+                // Show loading state in results
+                resultsSection.classList.remove('hidden');
+                cfList.innerHTML = '<li>Loading...</li>';
+                cbList.innerHTML = '<li>Loading...</li>';
+
+                try {
+                    const response = await fetch('/recommend', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: userId, // <-- FIX: Use the 'userId' variable
+                            item_id: itemId  // <-- FIX: Use the 'itemId' variable
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || 'An unknown error occurred.');
+                    }
+                    
+                    // Render results
+                    renderList(cfList, data.collaborative);
+                    renderList(cbList, data.content_based);
+
+                } catch (error) {
+                    cfList.innerHTML = `<li class="error">Error: ${error.message}</li>`;
+                    cbList.innerHTML = `<li class="error">Error: ${error.message}</li>`;
+                }
+            });
+
+
+            // --- Utility Functions ---
+            
+            /**
+             * Populates a <select> dropdown.
+             * @param {HTMLSelectElement} selectEl - The select element.
+             * @param {Array} data - Array of strings or objects.
+             * @param {string} placeholder - Placeholder text.
+             * @param {string} [textField] - If data is objects, the key for option text.
+             * @param {string} [valueField] - If data is objects, the key for option value.
+             */
+            function populateSelect(selectEl, data, placeholder, textField = null, valueField = null) {
+                selectEl.innerHTML = `<option value="">-- ${placeholder} --</option>`;
+                data.forEach(item => {
+                    let text, value;
+                    if (textField && valueField) {
+                        text = `${item[textField]} (ID: ${item[valueField]})`;
+                        value = item[valueField];
+                    } else {
+                        text = item;
+                        value = item;
+                    }
+                    const option = new Option(text, value);
+                    selectEl.add(option);
+                });
+            }
+
+            /**
+             * Renders a list of recommendations as <li> elements.
+             * @param {HTMLUListElement} listEl - The <ul> element.
+             * @param {Array} recs - Array of {item_id, title} objects.
+             */
+            function renderList(listEl, recs) {
+                if (!recs || recs.length === 0) {
+                    listEl.innerHTML = '<li>No recommendations found.</li>';
+                    return;
+                }
+                listEl.innerHTML = recs.map(item => 
+                    `<li>${item.title} <small>(ID: ${item.item_id})</small></li>`
+                ).join('');
+            }
+
+        });
+    </script>
+</body>
+</html>
