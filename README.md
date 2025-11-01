@@ -1,22 +1,46 @@
-Product Recommendation System
+#Product Recommendation System
 
-This is a simple web application built with Python, Flask, and scikit-learn that demonstrates and compares two fundamental recommendation algorithms:
+This is a simple web application that demonstrates and compares two fundamental recommendation algorithms: Content-Based Filtering and Collaborative Filtering.
 
-Content-Based Filtering: Recommends items based on their properties (e.g., description, category).
+The app allows a user to upload product and rating data, trains both models in real-time, and then provides a clean, side-by-side comparison of their recommendations.
 
-Collaborative Filtering: Recommends items based on the behavior of similar users (User-Based k-NN).
+Technologies Used
 
-The app allows a user to upload product and rating data, trains both models in real-time, and then provides a side-by-side comparison of their recommendations.
+How It Works
 
-Features
+This project is a hands-on tool to understand the practical difference between the two main filtering methods.
 
-Dynamic File Uploads: Upload your own products.csv and ratings.csv files.
+1. Content-Based Filtering (The "Product Expert")
 
-Side-by-Side Comparison: A clean UI to select a user and a product and see the different recommendations from both models.
+This model only reads the products.csv file. It doesn't know anything about users or ratings.
 
-Pure Python/scikit-learn: All models are built using pandas and scikit-learn (no surprise library needed).
+It uses TfidfVectorizer to convert product descriptions and categories into numerical vectors.
 
-Sample Data Generator: Includes a generate_datasets.py script to create perfectly formatted sample data.
+It then uses cosine_similarity to find products that are "textually" similar to the product you select.
+
+Result: Recommends items that are objectively similar (e.g., "Laptop" -> "Gaming PC", "Monitor").
+
+2. Collaborative Filtering (The "Taste Expert")
+
+This model only reads the ratings.csv file. It doesn't know what a "laptop" or "jacket" is.
+
+It creates a "user-item matrix" (who rated what).
+
+Using NearestNeighbors, it finds a cluster of users who have similar taste profiles (i.e., they rated items similarly).
+
+It then recommends items that those "neighbor" users loved but that the selected user hasn't seen yet.
+
+Result: Recommends items based on shared user behavior (e.g., "People who liked this... also liked...").
+
+Key Features
+
+🧪 Live Model Comparison: Get immediate, side-by-side results from both algorithms to understand their different approaches.
+
+⬆️ Dynamic Data Upload: Use your own products.csv and ratings.csv files to test the models on different datasets.
+
+🤖 Sample Data Generator: Includes a generate_datasets.py script to create perfectly formatted sample data to get you started instantly.
+
+🐍 Pure scikit-learn: Both models are built from the ground up using pandas and scikit-learn—no extra recommendation libraries needed.
 
 How to Run This Project Locally
 
