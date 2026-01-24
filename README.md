@@ -19,14 +19,14 @@ The app allows a user to upload product and rating data, trains both models in r
 
 This project is a hands-on tool to understand the practical difference between the two main filtering methods.
 
-### 1. Content-Based Filtering (The "Product Expert")
+### 1. Content-Based Filtering
 
 This model **only reads the `products.csv` file**. It doesn't know anything about users or ratings.
 * It uses `TfidfVectorizer` to convert product descriptions and categories into numerical vectors.
 * It then uses `cosine_similarity` to find products that are "textually" similar to the product you select.
 * **Result:** Recommends items that are objectively similar (e.g., "Laptop" -> "Gaming PC", "Monitor").
 
-### 2. Collaborative Filtering (The "Taste Expert")
+### 2. Collaborative Filtering
 
 This model **only reads the `ratings.csv` file**. It doesn't know what a "laptop" or "jacket" is.
 * It creates a "user-item matrix" (who rated what).
