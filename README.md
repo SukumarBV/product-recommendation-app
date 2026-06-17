@@ -41,6 +41,6 @@ This model **only reads the `ratings.csv` file**. It doesn't know what a "laptop
 * **Live Model Comparison:** Get immediate, side-by-side results from both algorithms to understand their different approaches.
 * **Dynamic Data Upload:** Use your own `products.csv` and `ratings.csv` files to test the models on different datasets.
 * **Sample Data Generator:** Includes a `generate_datasets.py` script to create perfectly formatted sample data to get you started instantly.
-* **🐍 Pure scikit-learn:** Both models are built from the ground up using `pandas` and `scikit-learn`—no extra recommendation libraries needed.
+* **Pure scikit-learn:** Both models are built from the ground up using `pandas` and `scikit-learn`—no extra recommendation libraries needed.
 
 ---
